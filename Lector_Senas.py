@@ -27,13 +27,13 @@ hands = mp_hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5
 cap = cv2.VideoCapture(0)
 
 ruta_modelos = r'C:\Users\Lightning\Documents\Sign-Language-Interpreter\CSV_Abecedario'
-ruta_imagen_referencia = r'C:\Users\Lightning\Documents\Sign-Language-Interpreter\abecedario.png'
+ruta_imagen_referencia = r'C:\Users\Lightning\Documents\Visual\Sign-Language-Interpreter\abecedario.png'
 ruta_modelo_ia = r'C:\Users\Lightning\Documents\Sign-Language-Interpreter\modelo_ia_senas.pkl'
 
 # Variables globales para el modelo de IA
 modelo_ia = None
 escalador = None
-modelo_ia_tipo = "RandomForest"  # Opciones: "RandomForest", "SVM", "KNN"
+modelo_ia_tipo = "RandomForest"  
 
 # Cargar modelos de letras
 def cargar_modelos():
