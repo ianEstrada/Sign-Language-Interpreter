@@ -20,15 +20,16 @@ except ImportError:
     print("ADVERTENCIA: scikit-learn no está instalado. Se usará reconocimiento basado en distancias.")
     print("Para usar reconocimiento basado en IA, instale scikit-learn con: pip install scikit-learn")
     scikit_learn_disponible = False
+    
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
 hands = mp_hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
 cap = cv2.VideoCapture(0)
 
-ruta_modelos = r'C:\Users\Lightning\Documents\Visual\Sign-Language-Interpreter\CSV_Abecedario'
-ruta_imagen_referencia = r'C:\Users\Lightning\Documents\Visual\Sign-Language-Interpreter\abecedario.png'
-ruta_modelo_ia = r'CC:\Users\Lightning\Documents\Visual\Sign-Language-Interpreter\modelo_ia_senas.pkl'
+ruta_modelos = r'C:\Users\Lightning\Documents\Sign-Language-Interpreter\CSV_Abecedario'
+ruta_imagen_referencia = r'C:\Users\Lightning\Documents\Sign-Language-Interpreter\abecedario.png'
+ruta_modelo_ia = r'C:\Users\Lightning\Documents\Sign-Language-Interpreter\modelo_ia_senas.pkl'
 
 # Variables globales para el modelo de IA
 modelo_ia = None
@@ -363,7 +364,7 @@ def solicitar_nombre():
         grosor_normal = escalador.escalar_valor(1)
         
         # Dibujar título e instrucciones con valores escalados
-        cv2.putText(ventana, "Bienvenido al Interprete de Lenguaje de Señas", pos_titulo, 
+        cv2.putText(ventana, "Bienvenido al Interprete de Lenguaje de Senas", pos_titulo, 
                     cv2.FONT_HERSHEY_SIMPLEX, escala_titulo, (255, 255, 255), grosor_titulo)
         cv2.putText(ventana, "Por favor, ingresa tu nombre:", pos_instruccion, 
                     cv2.FONT_HERSHEY_SIMPLEX, escala_instruccion, (255, 255, 255), grosor_normal)
