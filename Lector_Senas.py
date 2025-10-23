@@ -5,6 +5,8 @@ import os
 import time
 import string
 import pickle
+import pyttsx3
+import threading
 from typing import Tuple, List, Dict, Any, Optional
 
 # -----------------------------------------------------------------------------
@@ -12,10 +14,10 @@ from typing import Tuple, List, Dict, Any, Optional
 # -----------------------------------------------------------------------------
 
 # --- Rutas ---
-RUTA_BASE = r'C:\Users\LIghtning\Documents\emociones\Sign-Language-Interpreter'
-RUTA_DATOS_CSV = os.path.join(RUTA_BASE, 'CSV_Abecedario')
-RUTA_IMAGEN_REFERENCIA = os.path.join(RUTA_BASE, 'abecedario.png')
-RUTA_MODELO_IA = os.path.join(RUTA_BASE, 'modelo_ia_senas.pkl')
+
+RUTA_DATOS_CSV = ('CSV_Abecedario')
+RUTA_IMAGEN_REFERENCIA = ('abecedario.png')
+RUTA_MODELO_IA = ('modelo_ia_senas.pkl')
 
 # --- Parámetros del Modelo de IA ---
 MODELO_IA_TIPO = "SVM"  # Elige entre "RandomForest", "SVM", "KNN"
@@ -227,9 +229,44 @@ def crear_panel_inferior(ancho: int, texto_a_mostrar: str) -> np.ndarray:
     cv2.putText(panel, texto_a_mostrar, (pos_x, pos_y), cv2.FONT_HERSHEY_SIMPLEX, escala_fuente, (255, 255, 255), grosor)
     return panel
 
+
+def decir_palabra_en_hilo(texto: str):
+    """
+    Crea su PROPIO motor de voz en un hilo separado.
+    Es un poco más lento al iniciar, pero funciona cada vez.
+    """
+    if not texto:
+        return # No hacer nada si el texto está vacío
+        
+    try:
+        # 1. INICIA UN MOTOR NUEVO AQUÍ
+        try:
+            # Intenta con el driver específico primero
+            engine = pyttsx3.init(driverName='sapi5')
+        except Exception:
+            # Si falla, usa el default
+            engine = pyttsx3.init()
+        
+        # 2. CONFIGURA Y USA EL MOTOR
+        # Opcional: puedes ajustar la velocidad si quieres
+        # engine.setProperty('rate', 150) 
+        
+        engine.say(texto)
+        engine.runAndWait()
+        
+        # 3. Importante: Detener el motor al terminar
+        engine.stop()
+    except RuntimeError:
+        # Esto puede pasar si se interrumpe bruscamente
+        pass
+    except Exception as e:
+        print(f"Error en el hilo de voz: {e}")
+
 # -----------------------------------------------------------------------------
 # LÓGICA PRINCIPAL DE LA APLICACIÓN
 # -----------------------------------------------------------------------------
+
+
 
 def main():
     """Función principal que ejecuta la aplicación."""
@@ -277,6 +314,7 @@ def main():
                 letra_predicha = reconocer_letra(features, modelo_ia, escalador)
 
         # --- Lógica de Teclado ---
+# --- Lógica de Teclado ---
         key = cv2.waitKey(1) & 0xFF
         
         if key == ord(' ') and letra_predicha:
@@ -288,6 +326,21 @@ def main():
             palabra_actual = ""
         elif key == 8: # Backspace
              palabra_actual = palabra_actual[:-1]
+             
+        elif key == ord('v'):
+            # Ya no necesitamos 'tts_engine' en esta comprobación
+            if palabra_actual: 
+                print(f"Iniciando hilo de voz para: {palabra_actual}")
+                
+                hilo_voz = threading.Thread(
+                    target=decir_palabra_en_hilo, 
+                    # El argumento AHORA solo es el texto
+                    # ¡IMPORTANTE la coma al final para que sea una tupla!
+                    args=(palabra_actual,),  
+                    daemon=True
+                )
+                hilo_voz.start()
+            
         elif key == 27: # ESC
             break
             
